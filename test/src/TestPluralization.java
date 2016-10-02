@@ -34,7 +34,7 @@ import static org.junit.Assert.assertEquals;
  * Created by Timofey Klyubin on 01.10.2016.
  * t.klyubin@gmail.com
  */
-public class TestEnglishPluralization {
+public class TestPluralization {
 
     private Pluralize pluralize;
     private Locale russianLocale;
