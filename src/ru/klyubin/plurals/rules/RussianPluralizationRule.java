@@ -38,10 +38,11 @@ public final class RussianPluralizationRule implements PluralizationRule {
             return Pluralization.ZERO;
         }
         final int absQuantity = Math.abs(quantity);
-        if (absQuantity % 10 == 1 && absQuantity % 100 != 11) {
+        final boolean tens = (absQuantity % 100 > 20 || absQuantity % 100 < 10);
+        if (absQuantity % 10 == 1 && tens) {
             return Pluralization.ONE;
         }
-        if (absQuantity % 10 < 5 && absQuantity % 100 != 11) {
+        if (absQuantity % 10 < 5 && tens) {
             return Pluralization.FEW;
         }
         return Pluralization.MANY;

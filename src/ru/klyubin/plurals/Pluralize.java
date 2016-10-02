@@ -24,6 +24,7 @@
 
 package ru.klyubin.plurals;
 
+import org.apache.log4j.Logger;
 import ru.klyubin.plurals.util.UTF8Control;
 
 import java.text.MessageFormat;
@@ -36,30 +37,31 @@ import java.util.ResourceBundle;
  */
 public class Pluralize {
 
+    private static final Logger LOG = Logger.getLogger(Pluralize.class);
+
     private static final String DEFAULT_PROPERTIES = "plurals";
     private static final String DEFAULT_PREFIX = "java.plurals";
 
     private final PluralizationRuleProvider pluralizationRuleProvider;
-    private final ResourceBundle bundle;
+    private final String bundleName;
     private final String prefix;
-
-    public Pluralize(PluralizationRuleProvider pluralizationRuleProvider,
-                     ResourceBundle bundle,
-                     final String prefix) {
-        this.pluralizationRuleProvider = pluralizationRuleProvider;
-        this.bundle = bundle;
-        this.prefix = prefix;
-    }
+    private final ResourceBundle.Control utf8Control = new UTF8Control();
 
     public Pluralize(PluralizationRuleProvider pluralizationRuleProvider,
                      String bundleName,
                      final String prefix) {
-        this(pluralizationRuleProvider, ResourceBundle.getBundle(bundleName, new UTF8Control()), prefix);
+        this.pluralizationRuleProvider = pluralizationRuleProvider;
+        this.bundleName = bundleName;
+        this.prefix = prefix + ".";
+    }
+
+    private ResourceBundle getBundle(Locale locale) {
+        return ResourceBundle.getBundle(bundleName, locale, utf8Control);
     }
 
     public Pluralize(PluralizationRuleProvider pluralizationRuleProvider,
                      String bundleName) {
-        this(pluralizationRuleProvider, ResourceBundle.getBundle(bundleName, new UTF8Control()), DEFAULT_PREFIX);
+        this(pluralizationRuleProvider, bundleName, DEFAULT_PREFIX);
     }
 
     public Pluralize(PluralizationRuleProvider pluralizationRuleProvider) {
@@ -75,14 +77,14 @@ public class Pluralize {
     }
 
     public String pluralize(int quantity) {
+        LOG.debug("Default locale is:" + Locale.getDefault());
         return pluralize(quantity, Locale.getDefault());
     }
 
     public String pluralize(int quantity, Locale locale) {
         PluralizationRule rule = pluralizationRuleProvider.getRuleForLocale(locale);
         Pluralization pluralization = rule.select(quantity);
-        Locale.setDefault(locale);
-        final String rawString = bundle.getString(prefix + pluralization.toString());
+        final String rawString = getBundle(locale).getString(prefix + pluralization.toString());
         return MessageFormat.format(rawString, quantity);
     }
 

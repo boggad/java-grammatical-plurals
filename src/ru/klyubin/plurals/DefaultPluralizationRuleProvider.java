@@ -41,7 +41,7 @@ public class DefaultPluralizationRuleProvider implements PluralizationRuleProvid
     static {
         DEFAULT_RULES = new HashMap<>();
         DEFAULT_RULES.put(Locale.ENGLISH, new EnglishPluralizationRule());
-        DEFAULT_RULES.put(Locale.forLanguageTag("ru"), new RussianPluralizationRule());
+        DEFAULT_RULES.put(new Locale.Builder().setLanguage("ru").setRegion("RU").build(), new RussianPluralizationRule());
     }
 
     @Override
@@ -51,4 +51,5 @@ public class DefaultPluralizationRuleProvider implements PluralizationRuleProvid
         }
         return DEFAULT_RULES.get(locale);
     }
+
 }
