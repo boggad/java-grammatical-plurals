@@ -82,4 +82,13 @@ public class TestPluralization {
             assertEquals(String.valueOf(i) + " штук", Pluralizator.pluralize(TEST_KEY, i, russianLocale));
         }
     }
+
+    @Test
+    public void testDifferentKey() {
+        assertEquals("Осталось всего 2 дня отпуска :(", Pluralizator.pluralize("vacation", 2, russianLocale));
+        assertEquals("Осталось всего 5 дней отпуска :(", Pluralizator.pluralize("vacation", 5, russianLocale));
+        assertEquals("Остался всего 21 день отпуска :(", Pluralizator.pluralize("vacation", 21, russianLocale));
+        assertEquals("Осталось всего 150 дней отпуска :(", Pluralizator.pluralize("vacation", 150, russianLocale));
+        assertEquals("It's only 2 days of vacation left :(", Pluralizator.pluralize("vacation", 2, Locale.ENGLISH));
+    }
 }
