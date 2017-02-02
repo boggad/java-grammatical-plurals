@@ -24,6 +24,8 @@
 
 import org.junit.Before;
 import org.junit.Test;
+import ru.klyubin.plurals.Pluralization;
+import ru.klyubin.plurals.Pluralizator;
 import ru.klyubin.plurals.Pluralize;
 
 import java.util.Locale;
@@ -36,49 +38,48 @@ import static org.junit.Assert.assertEquals;
  */
 public class TestPluralization {
 
-    private Pluralize pluralize;
     private Locale russianLocale;
+    private static final String TEST_KEY = "test";
 
     @Before
     public void setUp() {
-        pluralize = new Pluralize();
         russianLocale = new Locale.Builder().setLanguage("ru").setRegion("RU").build();
     }
 
     @Test
     public void testZero() {
-        assertEquals("0 штук", pluralize.pluralize(0, russianLocale));
-        assertEquals("0 items", pluralize.pluralize(0, Locale.ENGLISH));
+        assertEquals("0 штук", Pluralizator.pluralize(TEST_KEY, 0, russianLocale));
+        assertEquals("0 items", Pluralizator.pluralize(TEST_KEY, 0, Locale.ENGLISH));
     }
 
     @Test
     public void testOne() {
-        assertEquals("1 штука", pluralize.pluralize(1, russianLocale));
-        assertEquals("1 item", pluralize.pluralize(1, Locale.ENGLISH));
+        assertEquals("1 штука", Pluralizator.pluralize(TEST_KEY, 1, russianLocale));
+        assertEquals("1 item", Pluralizator.pluralize(TEST_KEY, 1, Locale.ENGLISH));
     }
 
     @Test
     public void testFew() {
-        assertEquals("2 штуки", pluralize.pluralize(2, russianLocale));
-        assertEquals("2 items", pluralize.pluralize(2, Locale.ENGLISH));
+        assertEquals("2 штуки", Pluralizator.pluralize(TEST_KEY, 2, russianLocale));
+        assertEquals("2 items", Pluralizator.pluralize(TEST_KEY, 2, Locale.ENGLISH));
 
-        assertEquals("3 штуки", pluralize.pluralize(3, russianLocale));
-        assertEquals("3 items", pluralize.pluralize(3, Locale.ENGLISH));
+        assertEquals("3 штуки", Pluralizator.pluralize(TEST_KEY, 3, russianLocale));
+        assertEquals("3 items", Pluralizator.pluralize(TEST_KEY, 3, Locale.ENGLISH));
 
-        assertEquals("4 штуки", pluralize.pluralize(4, russianLocale));
-        assertEquals("4 items", pluralize.pluralize(4, Locale.ENGLISH));
+        assertEquals("4 штуки", Pluralizator.pluralize(TEST_KEY, 4, russianLocale));
+        assertEquals("4 items", Pluralizator.pluralize(TEST_KEY, 4, Locale.ENGLISH));
     }
 
     @Test
     public void testMany() {
-        assertEquals("5 штук", pluralize.pluralize(5, russianLocale));
-        assertEquals("5 items", pluralize.pluralize(5, Locale.ENGLISH));
+        assertEquals("5 штук", Pluralizator.pluralize(TEST_KEY, 5, russianLocale));
+        assertEquals("5 items", Pluralizator.pluralize(TEST_KEY, 5, Locale.ENGLISH));
 
-        assertEquals("7 штук", pluralize.pluralize(7, russianLocale));
-        assertEquals("7 items", pluralize.pluralize(7, Locale.ENGLISH));
+        assertEquals("7 штук", Pluralizator.pluralize(TEST_KEY, 7, russianLocale));
+        assertEquals("7 items", Pluralizator.pluralize(TEST_KEY, 7, Locale.ENGLISH));
 
         for (int i = 10; i < 21; i++) {
-            assertEquals(String.valueOf(i) + " штук", pluralize.pluralize(i, russianLocale));
+            assertEquals(String.valueOf(i) + " штук", Pluralizator.pluralize(TEST_KEY, i, russianLocale));
         }
     }
 }

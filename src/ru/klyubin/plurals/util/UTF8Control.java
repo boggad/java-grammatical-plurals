@@ -68,4 +68,8 @@ public final class UTF8Control extends Control {
         }
         return bundle;
     }
+
+    public static synchronized UTF8Control getInstance() {
+        return new UTF8Control();
+    }
 }

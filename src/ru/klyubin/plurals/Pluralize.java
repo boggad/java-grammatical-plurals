@@ -25,70 +25,56 @@
 package ru.klyubin.plurals;
 
 import org.apache.log4j.Logger;
-import ru.klyubin.plurals.util.UTF8Control;
+import ru.klyubin.plurals.internal.StringBundle;
 
 import java.text.MessageFormat;
 import java.util.Locale;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 /**
  * Created by Timofey Klyubin on 01.10.2016.
  * t.klyubin@gmail.com
+ *
+ * !!!WARNING!!!
+ * THIS CLASS IS FOR INTERNAL USE, PLEASE USE Pluralizator IN YOUR PROJECT
  */
 public class Pluralize {
 
     private static final Logger LOG = Logger.getLogger(Pluralize.class);
 
-    private static final String DEFAULT_PROPERTIES = "plurals";
-    private static final String DEFAULT_PREFIX = "java.plurals";
+    private PluralizationRuleProvider pluralizationRuleProvider;
 
-    private final PluralizationRuleProvider pluralizationRuleProvider;
-    private final String bundleName;
-    private final String prefix;
-    private final ResourceBundle.Control utf8Control = new UTF8Control();
+    private StringBundle bundle;
 
-    public Pluralize(PluralizationRuleProvider pluralizationRuleProvider,
-                     String bundleName,
-                     final String prefix) {
+    public Pluralize(StringBundle bundle) {
+        this(bundle, new DefaultPluralizationRuleProvider());
+    }
+
+    public Pluralize(StringBundle bundle, PluralizationRuleProvider pluralizationRuleProvider) {
         this.pluralizationRuleProvider = pluralizationRuleProvider;
-        this.bundleName = bundleName;
-        this.prefix = prefix + ".";
+        this.bundle = bundle;
     }
 
-    private ResourceBundle getBundle(Locale locale) {
-        return ResourceBundle.getBundle(bundleName, locale, utf8Control);
-    }
-
-    public Pluralize(PluralizationRuleProvider pluralizationRuleProvider,
-                     String bundleName) {
-        this(pluralizationRuleProvider, bundleName, DEFAULT_PREFIX);
-    }
-
-    public Pluralize(PluralizationRuleProvider pluralizationRuleProvider) {
-        this(pluralizationRuleProvider, DEFAULT_PROPERTIES);
-    }
-
-    public Pluralize(final String prefix) {
-        this(new DefaultPluralizationRuleProvider(), DEFAULT_PROPERTIES, prefix);
-    }
-
-    public Pluralize() {
-        this(new DefaultPluralizationRuleProvider());
-    }
-
-    public String pluralize(int quantity) {
-        LOG.debug("Default locale is:" + Locale.getDefault());
-        return pluralize(quantity, Locale.getDefault());
+    public static Pluralize getInstance(StringBundle bundle) {
+        return new Pluralize(bundle);
     }
 
     public String pluralize(int quantity, Locale locale) {
         PluralizationRule rule = pluralizationRuleProvider.getRuleForLocale(locale);
         Pluralization pluralization = rule.select(quantity);
-        final String rawString = getBundle(locale).getString(prefix + pluralization.toString());
+        final String rawString = bundle.getString(locale, pluralization);
+        if (rawString == null) {
+            throw new IllegalArgumentException("Pluralization strings for locale [".concat(locale.getDisplayLanguage()).concat("] does not exist!"));
+        }
         return MessageFormat.format(rawString, quantity);
     }
 
     protected PluralizationRule getRuleForLocale(Locale locale) {
         return pluralizationRuleProvider.getRuleForLocale(locale);
+    }
+
+    public void setPluralizationRuleProvider(PluralizationRuleProvider pluralizationRuleProvider) {
+        this.pluralizationRuleProvider = pluralizationRuleProvider;
     }
 }
